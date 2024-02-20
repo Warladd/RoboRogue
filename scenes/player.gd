@@ -4,6 +4,8 @@ extends CharacterBody3D
 @export var jump_velocity = 4.5
 @export var max_fall_distance : int = 8
 
+@export var battery_life : float = 100
+
 var look_sensitivity = ProjectSettings.get_setting("player/look_sensitivity")
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var velocity_y = 0
