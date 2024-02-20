@@ -44,7 +44,7 @@ mesh = SubResource("PlaneMesh_tj5wd")
 shape = SubResource("ConcavePolygonShape3D_u282t")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9716, -0.807898, -0.127448)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.9764, 0, -0.127)
 mesh = SubResource("PlaneMesh_tj5wd")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D2"]
@@ -53,7 +53,7 @@ mesh = SubResource("PlaneMesh_tj5wd")
 shape = SubResource("ConcavePolygonShape3D_u282t")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.5282, -1.45568, -0.159212)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5188, 0, -0.159)
 mesh = SubResource("PlaneMesh_tj5wd")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D3"]
