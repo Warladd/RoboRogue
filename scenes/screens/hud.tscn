@@ -1,0 +1,76 @@
+[gd_scene load_steps=2 format=3 uid="uid://bl6o2wj0jm6d2"]
+
+[ext_resource type="LabelSettings" uid="uid://dic34lb6rh0v8" path="res://resources/hud_label_settings.tres" id="1_5p3qk"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -20.0
+offset_right = 30.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+modulate = Color(0.639216, 0, 0.137255, 1)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Health:"
+label_settings = ExtResource("1_5p3qk")
+
+[node name="health" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = " 100"
+label_settings = ExtResource("1_5p3qk")
+
+[node name="HBoxContainer2" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+modulate = Color(1, 0.752941, 0.207843, 1)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Battery:"
+label_settings = ExtResource("1_5p3qk")
+
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+step = 0.1
+value = 100.0
+rounded = true
+show_percentage = false
+
+[node name="HudUpdates" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2

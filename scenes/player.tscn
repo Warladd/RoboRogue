@@ -1,15 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://crqknke1qy87p"]
+[gd_scene load_steps=5 format=3 uid="uid://crqknke1qy87p"]
 
-[ext_resource type="Script" path="res://scenes/player.gd" id="1_v1njk"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_qvqio"]
+[ext_resource type="PackedScene" uid="uid://bl6o2wj0jm6d2" path="res://scenes/screens/hud.tscn" id="2_eqyc0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ps1sb"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_sihf8"]
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "coyote_timer")]
-script = ExtResource("1_v1njk")
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "coyote_timer", "battery_timer", "hud_updates", "hud_overlay")]
+script = ExtResource("1_qvqio")
 camera = NodePath("Camera3D")
 coyote_timer = NodePath("CoyoteTimer")
+battery_timer = NodePath("BatteryTimer")
+hud_updates = NodePath("HUD/HudUpdates")
+hud_overlay = NodePath("HUD/Overlay")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_ps1sb")
@@ -18,9 +22,18 @@ shape = SubResource("CapsuleShape3D_ps1sb")
 mesh = SubResource("CapsuleMesh_sihf8")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.466249, 0)
-fov = 120.328
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.620912, 0)
+fov = 113.785
 
 [node name="CoyoteTimer" type="Timer" parent="."]
 wait_time = 0.15
 one_shot = true
+
+[node name="BatteryTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="HUD" parent="." instance=ExtResource("2_eqyc0")]
+
+[connection signal="timeout" from="BatteryTimer" to="." method="_on_battery_timer_timeout"]
+
+[editable path="HUD"]
