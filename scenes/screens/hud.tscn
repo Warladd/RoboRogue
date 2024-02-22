@@ -1,6 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://bl6o2wj0jm6d2"]
+[gd_scene load_steps=5 format=3 uid="uid://bl6o2wj0jm6d2"]
 
 [ext_resource type="LabelSettings" uid="uid://dic34lb6rh0v8" path="res://resources/hud_label_settings.tres" id="1_5p3qk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iy5y6"]
+bg_color = Color(0.0156863, 0.117647, 0.223529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6vvob"]
+bg_color = Color(0.0196078, 0.580392, 0.831373, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_8ambw"]
+font_size = 23
+font_color = Color(0, 0.392157, 0.847059, 1)
+outline_size = 3
+outline_color = Color(0, 0.894118, 0.894118, 1)
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -26,48 +38,48 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -20.0
-offset_right = 30.0
+offset_top = -83.0
+offset_right = 254.0
 grow_vertical = 0
 mouse_filter = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-modulate = Color(0.639216, 0, 0.137255, 1)
+[node name="health" type="Label" parent="MarginContainer/VBoxContainer"]
+modulate = Color(0.486275, 0.0705882, 0.0588235, 1)
 layout_mode = 2
+text = " 100%"
+label_settings = ExtResource("1_5p3qk")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BatteryBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 2
-
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "Health:"
-label_settings = ExtResource("1_5p3qk")
-
-[node name="health" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = " 100"
-label_settings = ExtResource("1_5p3qk")
-
-[node name="HBoxContainer2" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
-modulate = Color(1, 0.752941, 0.207843, 1)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-text = "Battery:"
-label_settings = ExtResource("1_5p3qk")
-
-[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_iy5y6")
+theme_override_styles/fill = SubResource("StyleBoxFlat_6vvob")
 step = 0.1
 value = 100.0
 rounded = true
 show_percentage = false
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/BatteryBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "100"
+label_settings = SubResource("LabelSettings_8ambw")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="HudUpdates" type="Control" parent="."]
 anchors_preset = 0

@@ -7,13 +7,17 @@
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_sihf8"]
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "coyote_timer", "battery_timer", "hud_updates", "hud_overlay")]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "coyote_timer", "battery_timer", "dash_timer", "hud_updates", "hud_overlay", "health_val", "battery_val", "battery_label")]
 script = ExtResource("1_qvqio")
 camera = NodePath("Camera3D")
-coyote_timer = NodePath("CoyoteTimer")
-battery_timer = NodePath("BatteryTimer")
+coyote_timer = NodePath("Timers/CoyoteTimer")
+battery_timer = NodePath("Timers/BatteryTimer")
+dash_timer = NodePath("Timers/DashTimer")
 hud_updates = NodePath("HUD/HudUpdates")
 hud_overlay = NodePath("HUD/Overlay")
+health_val = NodePath("HUD/MarginContainer/VBoxContainer/health")
+battery_val = NodePath("HUD/MarginContainer/VBoxContainer/BatteryBar")
+battery_label = NodePath("HUD/MarginContainer/VBoxContainer/BatteryBar/Label")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_ps1sb")
@@ -25,15 +29,22 @@ mesh = SubResource("CapsuleMesh_sihf8")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.620912, 0)
 fov = 113.785
 
-[node name="CoyoteTimer" type="Timer" parent="."]
+[node name="Timers" type="Node3D" parent="."]
+
+[node name="CoyoteTimer" type="Timer" parent="Timers"]
 wait_time = 0.15
 one_shot = true
 
-[node name="BatteryTimer" type="Timer" parent="."]
+[node name="BatteryTimer" type="Timer" parent="Timers"]
 autostart = true
+
+[node name="DashTimer" type="Timer" parent="Timers"]
+wait_time = 0.3
+one_shot = true
 
 [node name="HUD" parent="." instance=ExtResource("2_eqyc0")]
 
-[connection signal="timeout" from="BatteryTimer" to="." method="_on_battery_timer_timeout"]
+[connection signal="timeout" from="Timers/BatteryTimer" to="." method="_on_battery_timer_timeout"]
+[connection signal="timeout" from="Timers/DashTimer" to="." method="_on_dash_timer_timeout"]
 
 [editable path="HUD"]
