@@ -13,6 +13,13 @@ var t_bob = 0.0
 @export var max_fall_distance : int = 8
 var gravity = 11
 
+# Movement
+var direction
+var saved_dir
+var input_dir
+var dashing : bool = false
+var can_dash : bool = true
+var dash_speed : float = speed * 3
 
 # Battery
 @export_group("Battery")
@@ -26,17 +33,21 @@ const FOV_CHANGE = 1.5
 var look_sensitivity = ProjectSettings.get_setting("player/look_sensitivity")
 
 # HUD
-@onready var health_val := $MarginContainer/VBoxContainer/HBoxContainer/health
-@onready var battery_val := $MarginContainer/VBoxContainer/HBoxContainer2/battery
 var hud_item = preload("res://scripts/hud_item.gd")
 
 # Nodes
 @export_group("Nodes")
 @export var camera : Camera3D
+# Timers
 @export var coyote_timer : Timer
 @export var battery_timer : Timer
+@export var dash_timer : Timer
+# HUD Nodes
 @export var hud_updates : Control
 @export var hud_overlay : ColorRect
+@export var health_val : Label
+@export var battery_val : ProgressBar
+@export var battery_label : Label
 
 func _ready() -> void:
 	# Making player accessible to other scripts
@@ -44,24 +55,34 @@ func _ready() -> void:
 	# Makes mouse invisible
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-
 func _unhandled_input(event) -> void:
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * look_sensitivity)
 		camera.rotate_x(-event.relative.y * look_sensitivity)
 		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
-		update_hud()
 
 func _physics_process(delta) -> void:
 	# Movement and Gravity
-	var horizontal_velocity = Input.get_vector("left", "right", "up", "down")
-	var direction = (transform.basis * Vector3(horizontal_velocity.x, 0, horizontal_velocity.y)).normalized()
-	if is_on_floor() or (!coyote_timer.is_stopped() and velocity.y <= 0):
+	if !dashing:
+		input_dir = Input.get_vector("left", "right", "up", "down")
+		direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+		if direction:
+			saved_dir = direction
+	
+	if Input.is_action_just_pressed("dash"):
+		if !can_dash:
+			return
+		can_dash = false
+		dashing = true
+		lose_battery(base_battery_drain_speed * 10)
+		dash_timer.start()
+		
+	if is_on_floor() or (!coyote_timer.is_stopped() and velocity.y <= 0) and !dashing:
 		if direction:
 			battery_drain_speed = base_battery_drain_speed * 3
 			velocity.x = direction.x * speed
 			velocity.z = direction.z * speed
-		else:
+		elif !direction:
 			battery_drain_speed = base_battery_drain_speed
 			velocity.x = 0.0
 			velocity.z = 0.0
@@ -69,27 +90,37 @@ func _physics_process(delta) -> void:
 		if Input.is_action_just_pressed("jump"): 
 			lose_battery(base_battery_drain_speed * 5)
 			velocity.y = jump_velocity
+	
 	else:
+		if dashing:
+			pass
 		# Inertia
 		velocity.x = lerp(velocity.x, direction.x * speed, delta * 3.0)
 		velocity.z = lerp(velocity.z, direction.z * speed, delta * 3.0)
 		# Gravity
 		velocity.y -= gravity * delta
-		if position.z >= max_fall_distance:
-			get_tree().reload_current_scene()
+		#if position.y >= max_fall_distance:
+			#get_tree().reload_current_scene()
+	
+	if dashing:
+		if !direction:
+			direction = saved_dir
+		if is_on_floor():
+			velocity = lerp(velocity, velocity * dash_speed, 10 * delta)
+			velocity.y = 0
+		elif !is_on_floor():
+			velocity = lerp(velocity, velocity * dash_speed, 0.2 * delta)
+			velocity.y = 0
 	
 	# Head Bob
-	t_bob += delta * velocity.length() * float(is_on_floor())
-	camera.transform.origin = headbob(t_bob)
+	if !dashing:
+		t_bob += delta * velocity.length() * float(is_on_floor())
+		camera.transform.origin = headbob(t_bob)
 	
 	# Changes the fov based on speed
 	var velocity_clamped = clamp(velocity.length(), 0.5, speed * 2)
 	var target_fov = BASE_FOV + FOV_CHANGE + velocity_clamped
 	camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
-	
-	# Escape key quits the game.
-	if Input.is_action_just_pressed("esc"):
-		get_tree().quit()
 	
 	# Checks if the player is on the ground.
 	var was_on_floor = is_on_floor()
@@ -99,6 +130,11 @@ func _physics_process(delta) -> void:
 	# If the player was on the ground and is no longer on the ground it starts the coyote jump timer.
 	if was_on_floor and !is_on_floor():
 		coyote_timer.start()
+
+func _input(event) -> void:
+	# Escape key quits the game.
+	if Input.is_action_just_pressed("esc"):
+		get_tree().quit()
 
 func headbob(time) -> Vector3:
 	var pos = Vector3.ZERO
@@ -115,8 +151,16 @@ func lose_battery(amount : float):
 	update_hud()
 
 func update_hud() -> void:
-	health_val.text = " " + str(health)
-	battery_val.text = " " + str(battery_life) + "%"
+	health_val.text = " " + str(health) + "%"
+	battery_val.value = battery_life
+	battery_label.text = " " + str(battery_life)
+	
+	if health > 60:
+		health_val.modulate = Color("007305")
+	elif health > 35:
+		health_val.modulate = Color("989a21")
+	elif health <= 35:
+		health_val.modulate = Color("7c120f")
 
 func add_hud_update(qty,text,color) -> void:
 	var lab = hud_item.instantiate()
@@ -128,3 +172,7 @@ func screen_glow(color):
 	var tween = get_tree().create_tween()
 	tween.tween_property(hud_overlay, "color", color, 0.1)
 	tween.tween_property(hud_overlay, "color", Color(1,0,0,0), 0.7)
+
+func _on_dash_timer_timeout():
+	dashing = false
+	can_dash = true
