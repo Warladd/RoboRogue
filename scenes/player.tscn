@@ -1,23 +1,37 @@
-[gd_scene load_steps=5 format=3 uid="uid://crqknke1qy87p"]
+[gd_scene load_steps=8 format=3 uid="uid://crqknke1qy87p"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_qvqio"]
-[ext_resource type="PackedScene" uid="uid://bl6o2wj0jm6d2" path="res://scenes/screens/hud.tscn" id="2_eqyc0"]
+[ext_resource type="LabelSettings" uid="uid://dic34lb6rh0v8" path="res://resources/hud_label_settings.tres" id="2_oouhl"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ps1sb"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_sihf8"]
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "coyote_timer", "battery_timer", "dash_timer", "hud_updates", "hud_overlay", "health_val", "battery_val", "battery_label")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iy5y6"]
+bg_color = Color(0.0156863, 0.117647, 0.223529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6vvob"]
+bg_color = Color(0.0196078, 0.580392, 0.831373, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_8ambw"]
+font_size = 23
+font_color = Color(0, 0.392157, 0.847059, 1)
+outline_size = 3
+outline_color = Color(0, 0.894118, 0.894118, 1)
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "coyote_timer", "battery_timer", "dash_timer", "can_dash_timer", "hud_updates", "hud_overlay", "health_val", "battery_val", "battery_label", "pause_menu")]
 script = ExtResource("1_qvqio")
 camera = NodePath("Camera3D")
 coyote_timer = NodePath("Timers/CoyoteTimer")
 battery_timer = NodePath("Timers/BatteryTimer")
 dash_timer = NodePath("Timers/DashTimer")
+can_dash_timer = NodePath("Timers/CanDashTimer")
 hud_updates = NodePath("HUD/HudUpdates")
 hud_overlay = NodePath("HUD/Overlay")
 health_val = NodePath("HUD/MarginContainer/VBoxContainer/health")
 battery_val = NodePath("HUD/MarginContainer/VBoxContainer/BatteryBar")
 battery_label = NodePath("HUD/MarginContainer/VBoxContainer/BatteryBar/Label")
+pause_menu = NodePath("HUD/Pause Menu")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_ps1sb")
@@ -39,12 +53,125 @@ one_shot = true
 autostart = true
 
 [node name="DashTimer" type="Timer" parent="Timers"]
-wait_time = 0.3
+wait_time = 0.4
 one_shot = true
 
-[node name="HUD" parent="." instance=ExtResource("2_eqyc0")]
+[node name="CanDashTimer" type="Timer" parent="Timers"]
+wait_time = 0.6
+one_shot = true
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Overlay" type="ColorRect" parent="HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -83.0
+offset_right = 254.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="health" type="Label" parent="HUD/MarginContainer/VBoxContainer"]
+modulate = Color(0.486275, 0.0705882, 0.0588235, 1)
+layout_mode = 2
+text = " 100%"
+label_settings = ExtResource("2_oouhl")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BatteryBar" type="ProgressBar" parent="HUD/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_iy5y6")
+theme_override_styles/fill = SubResource("StyleBoxFlat_6vvob")
+step = 0.1
+value = 100.0
+rounded = true
+show_percentage = false
+
+[node name="Label" type="Label" parent="HUD/MarginContainer/VBoxContainer/BatteryBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "100"
+label_settings = SubResource("LabelSettings_8ambw")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HudUpdates" type="Control" parent="HUD"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="Pause Menu" type="VBoxContainer" parent="HUD"]
+process_mode = 2
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -266.0
+offset_top = -176.0
+offset_right = 267.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="ResumeButton" type="Button" parent="HUD/Pause Menu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Resume"
+
+[node name="SettingsButton" type="Button" parent="HUD/Pause Menu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Settings"
+
+[node name="QuitMainButton" type="Button" parent="HUD/Pause Menu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Quit to Main Menu"
+
+[node name="QuitDeskButton" type="Button" parent="HUD/Pause Menu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Quit to Desktop"
 
 [connection signal="timeout" from="Timers/BatteryTimer" to="." method="_on_battery_timer_timeout"]
 [connection signal="timeout" from="Timers/DashTimer" to="." method="_on_dash_timer_timeout"]
-
-[editable path="HUD"]
+[connection signal="timeout" from="Timers/CanDashTimer" to="." method="_on_can_dash_timer_timeout"]
+[connection signal="pressed" from="HUD/Pause Menu/ResumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="HUD/Pause Menu/QuitDeskButton" to="." method="_on_quit_desk_button_pressed"]
