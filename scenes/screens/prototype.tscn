@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://duulsoc7y2l27"]
+[gd_scene load_steps=16 format=3 uid="uid://duulsoc7y2l27"]
 
 [ext_resource type="PackedScene" uid="uid://crqknke1qy87p" path="res://scenes/player.tscn" id="1_4yp4i"]
 [ext_resource type="Material" uid="uid://ybpadxknibri" path="res://resources/testing_wall.tres" id="2_4srwp"]
@@ -24,6 +24,15 @@ size = Vector2(100, 100)
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_od1ay"]
 data = PackedVector3Array(50, 0, 50, -50, 0, 50, 50, 0, -50, -50, 0, 50, -50, 0, -50, 50, 0, -50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4h8uf"]
+albedo_color = Color(0.239216, 0.329412, 1, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_f48qf"]
+size = Vector2(20, 30)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_kgdpe"]
+size = Vector2(50, 30)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4rasb"]
 albedo_color = Color(0.866667, 0, 0.129412, 1)
@@ -60,6 +69,56 @@ mesh = SubResource("PlaneMesh_tj5wd")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D2"]
 shape = SubResource("ConcavePolygonShape3D_od1ay")
 
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.87139, -0.622101, 77.4244)
+material_override = SubResource("StandardMaterial3D_4h8uf")
+mesh = SubResource("PlaneMesh_f48qf")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="MeshInstance3D2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D2/StaticBody3D2"]
+shape = SubResource("ConcavePolygonShape3D_od1ay")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.87139, -0.622101, 128.183)
+material_override = SubResource("StandardMaterial3D_4h8uf")
+mesh = SubResource("PlaneMesh_f48qf")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="MeshInstance3D3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D3/StaticBody3D2"]
+shape = SubResource("ConcavePolygonShape3D_od1ay")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.87139, -0.622101, 177.102)
+material_override = SubResource("StandardMaterial3D_4h8uf")
+mesh = SubResource("PlaneMesh_f48qf")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="MeshInstance3D4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D4/StaticBody3D2"]
+shape = SubResource("ConcavePolygonShape3D_od1ay")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.87139, -0.622101, 261.063)
+material_override = SubResource("StandardMaterial3D_4h8uf")
+mesh = SubResource("PlaneMesh_f48qf")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="MeshInstance3D5"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D5/StaticBody3D2"]
+shape = SubResource("ConcavePolygonShape3D_od1ay")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.87139, -0.622101, 348.928)
+material_override = SubResource("StandardMaterial3D_4h8uf")
+mesh = SubResource("PlaneMesh_kgdpe")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="MeshInstance3D6"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D6/StaticBody3D2"]
+shape = SubResource("ConcavePolygonShape3D_od1ay")
+
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.972, -0.439416, -21.9087)
 material_override = SubResource("StandardMaterial3D_4rasb")
@@ -80,10 +139,16 @@ use_collision = true
 size = Vector3(10.4639, 10.9644, 11.2312)
 
 [node name="CSGBox3D4" type="CSGBox3D" parent="."]
-transform = Transform3D(0.999999, 0, 0.00165806, 0, 1, 0, -0.00165806, 0, 0.999999, 0.109035, 4.11778, 47.1203)
+transform = Transform3D(0.999999, 0, 0.00165806, 0, 1, 0, -0.00165806, 0, 0.999999, 32.2686, 4.11778, 47.067)
 material_override = ExtResource("2_4srwp")
 use_collision = true
-size = Vector3(100.19, 8.22617, 5.95342)
+size = Vector3(35.8707, 8.22617, 5.95342)
+
+[node name="CSGBox3D8" type="CSGBox3D" parent="."]
+transform = Transform3D(0.999999, 0, 0.00165806, -2.44812e-05, 0.999891, 0.0147649, -0.00165788, -0.0147649, 0.99989, -31.1518, 4.11768, 47.2812)
+material_override = ExtResource("2_4srwp")
+use_collision = true
+size = Vector3(38.1532, 8.22617, 5.95342)
 
 [node name="CSGBox3D5" type="CSGBox3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 47.3872, 3.95569, -2.00829)

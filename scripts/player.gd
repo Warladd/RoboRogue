@@ -42,20 +42,24 @@ var hud_item = preload("res://scripts/hud_item.gd")
 @export var coyote_timer : Timer
 @export var battery_timer : Timer
 @export var dash_timer : Timer
+@export var can_dash_timer : Timer
 # HUD Nodes
 @export var hud_updates : Control
 @export var hud_overlay : ColorRect
 @export var health_val : Label
 @export var battery_val : ProgressBar
 @export var battery_label : Label
+@export var pause_menu : VBoxContainer
 
 func _ready() -> void:
+	pause_menu.hide()
 	# Making player accessible to other scripts
 	Global.player = self
 	# Makes mouse invisible
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _unhandled_input(event) -> void:
+	# Rotates the view of the camera with the mouse
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * look_sensitivity)
 		camera.rotate_x(-event.relative.y * look_sensitivity)
@@ -70,12 +74,11 @@ func _physics_process(delta) -> void:
 			saved_dir = direction
 	
 	if Input.is_action_just_pressed("dash"):
-		if !can_dash:
-			return
-		can_dash = false
-		dashing = true
-		lose_battery(base_battery_drain_speed * 10)
-		dash_timer.start()
+		if can_dash:
+			dashing = true
+			can_dash = false
+			lose_battery(base_battery_drain_speed * 10)
+			dash_timer.start()
 		
 	if is_on_floor() or (!coyote_timer.is_stopped() and velocity.y <= 0) and !dashing:
 		if direction:
@@ -90,10 +93,7 @@ func _physics_process(delta) -> void:
 		if Input.is_action_just_pressed("jump"): 
 			lose_battery(base_battery_drain_speed * 5)
 			velocity.y = jump_velocity
-	
 	else:
-		if dashing:
-			pass
 		# Inertia
 		velocity.x = lerp(velocity.x, direction.x * speed, delta * 3.0)
 		velocity.z = lerp(velocity.z, direction.z * speed, delta * 3.0)
@@ -132,9 +132,9 @@ func _physics_process(delta) -> void:
 		coyote_timer.start()
 
 func _input(event) -> void:
-	# Escape key quits the game.
+	# Escape key pauses the game.
 	if Input.is_action_just_pressed("esc"):
-		get_tree().quit()
+		pause()
 
 func headbob(time) -> Vector3:
 	var pos = Vector3.ZERO
@@ -175,4 +175,24 @@ func screen_glow(color):
 
 func _on_dash_timer_timeout():
 	dashing = false
+	can_dash_timer.start()
+
+func _on_can_dash_timer_timeout():
 	can_dash = true
+	
+func pause() -> void:
+	pause_menu.visible = !pause_menu.visible
+	if pause_menu.visible:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	elif !pause_menu.visible:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	var tree = get_tree()
+	if tree == null:
+		return
+	tree.paused = pause_menu.visible
+
+func _on_quit_desk_button_pressed():
+	get_tree().quit(0)
+
+func _on_resume_button_pressed():
+	pause()
